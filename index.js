@@ -1,62 +1,81 @@
-
-const fs = require('fs');
+// TODO: Include packages needed for this application
 const inquirer = require('inquirer')
-const path = require('path')
 const generateMarkdown = require("./utils/generateMarkdown");
+const fs = require('fs');
 
-
-const questions = [
-    {
+// TODO: Create an array of questions for user input
+const questions = [{
     type: 'input',
-    name: 'title',
     message: 'What is the title of the project?',
+    name: 'Title'
 },{
     type: 'input',
-    name: 'description',
-    message: 'What is the project about?',
-}, {
-    type: 'checkbox',
-    message: 'Please select a license applicable to this project.',
-    choices: ['Mit', 'APACHE License 2.0', 'Boost Software License 1.0', 'Mozilla Public License 2.0'],
+    message: 'Provide a brief description of your project.',
+    name: "description"
+},{
+    type: 'input',
+    message: 'What problem does your project solve?',
+    name: 'problem'
 }, {
     type: 'input',
-    name: 'require',
-    message: 'List any project dependencies here.',
+    message: 'What have you learned from your project?',
+    name: 'learn'
 }, {
     type: 'input',
-    name:'usage',
-    message: 'List the languages or technologies you used within this project.',
-},{
-    type:'input',
-    name: 'creator',
-    message: 'Write your GitHub Username',
-},{
-    type:'input',
-    name:'email',
-    message:'Provide your email',
-},{
-    type:'input',
-    name:'contributors',
-    message:'List any contributors, also add their github usernames',
+    message: 'How can a user install this application?',
+    name: 'install'
 }, {
-    type:'input',
-    name:'test',
-    message: 'What is the test process for this subject?'
-}    
+    type: 'input',
+    message: 'What does the user need to know about this application?',
+    name: 'usage'
+}, {
+    tyoe: 'input',
+    message: 'what does the user need to know about contributing to the project?',
+    name: 'contribute',
+}, {
+    type: 'input',
+    message: 'What command should be used to run on the project?',
+    name: 'test'
+}, {
+    type: 'input',
+    message: 'what kind of license should your project have?',
+    name: 'license',
+    choices: [
+        'MIT',
+        'APACHE',
+        'GPL',
+        'BSD',
+        'None'
+    ]
+}, {
+    type: 'input',
+    message: 'What is your GitHub username?',
+    name: 'username'
+}, {
+    type: 'input',
+    message: 'What is your GitHub email address?',
+    name: 'email'
+},
 ];
 
-
+// TODO: Create a function to write README file
 function writeToFile(fileName, data) {
-    return fs.writeFileSync(path.join(process.cwd(), fileName), data);
-};
-
-
-function init(){
-    inquirer.createPromptModule(questions).then(responses) => {
-        console.log('Creating Professional README.ms File.');
-        writeToFile('./dist/README.md', generateMarkdown({...responses}));
-    };
+    var content = generateMarkdown(data);
+    fs.writeFile(fileName, content, function(error) {
+        if(error) {
+            return console.log(error);
+        }
+        console.log('success');
+    })
 }
 
+// TODO: Create a function to initialize app
+function init() {
+    inquirer.prompt(questions).then(function (data) {
+        var fileName = 'ReadMe.md';
+        writeToFile(fileName, data);
+    });
+}
 
+// Function call to initialize app
 init();
